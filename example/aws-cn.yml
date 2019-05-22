@@ -1,0 +1,20 @@
+accessKey: ???
+secretKey: ???
+deviceName: /dev/sda1
+instanceType: t2.micro
+region: cn-northwest-1
+retries: "5"
+rootSize: "20"
+spotPrice: "0.50"
+volumeType: gp2
+vpcId: vpc-0d9420d8b3b011ecf
+subnetId: subnet-05e7a4e92c9e5b162
+zone: cn-northwest-1b
+securityGroup:
+  - internal-dev-20180925093054590400000001
+keypairName: general-prod-cn
+sshKeypath: /Users/zhangys10/Documents/token/general-prod-cn.pem
+sshUser: centos
+ami: ami-0bb08424eb3cf2e80
+endpoint: "https://ec2.cn-northwest-1.amazonaws.com.cn"
+usePrivateAddress: true
