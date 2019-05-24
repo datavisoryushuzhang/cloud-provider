@@ -9,6 +9,12 @@
 			"revisionTime": "2019-02-26T22:47:05Z"
 		},
 		{
+			"checksumSHA1": "2naXf1qaewM+aM3MPwLrH/+w6u4=",
+			"path": "github.com/rancher/norman/types/convert",
+			"revision": "ea122abac582d745a00dba0aaf946c29ee8d9d90",
+			"revisionTime": "2019-05-03T15:51:40Z"
+		},
+		{
 			"checksumSHA1": "SVO+Zm6SNwWrpgyc6mcTXbH4aJ8=",
 			"path": "github.com/sirupsen/logrus",
 			"revision": "2a22dbedbad1fd454910cd1f44f210ef90c28464",

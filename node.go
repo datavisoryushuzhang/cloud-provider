@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/rancher/norman/types/convert"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -15,6 +16,7 @@ import (
 
 var regExHyphen = regexp.MustCompile("([a-z])([A-Z])")
 const nodeCmd = "docker-machine"
+const ec2TagFlag = "tags"
 
 func main() {
 	setLogLevel()
@@ -32,12 +34,12 @@ func main() {
 	}
 
 	// set cloud credentials
-	setCloudCredentials(&configMap)
+	setCloudCredentials(configMap)
 
 	// build create machine command
 	cmdArgs := buildCreateCommand(&cloudConfig{
 		"amazonec2",
-		"us",
+		"cn",
 		"dev",
 	}, configMap)
 
@@ -86,6 +88,13 @@ type cloudConfig struct {
 
 func buildCreateCommand(cloud *cloudConfig, configMap map[interface{}]interface{}) []string {
 	sDriver := strings.ToLower(cloud.cloudDriver)
+
+	// for AWS cloud provider, need add tags, refer to:
+	// https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#aws
+	if sDriver == "amazonec2" {
+		setEc2ClusterIDTag(configMap, "test-cluster-id")
+	}
+
 	cmd := []string{"create", "-d", sDriver}
 	//
 	//cmd = append(cmd, buildEngineOpts("--engine-install-url", []string{node.Spec.EngineInstallUrl})...)
@@ -121,9 +130,20 @@ func buildCreateCommand(cloud *cloudConfig, configMap map[interface{}]interface{
 			}
 		}
 	}
+
 	logrus.Debugf("create cmd %v", cmd)
 	//cmd = append(cmd, node.Spec.RequestedHostname)
 	return cmd
+}
+
+func setEc2ClusterIDTag(m map[interface{}]interface{}, clusterID string) {
+	tagValue := fmt.Sprintf("kubernetes.io/cluster/%s,owned", clusterID)
+	if tags, ok := m[ec2TagFlag].(map[interface{}]interface{}); !ok || convert.ToString(tags) == "" {
+		m[ec2TagFlag] = tagValue
+	} else {
+		m[ec2TagFlag] = convert.ToString(tags) + "," + tagValue
+	}
+
 }
 
 func buildCommand(cmdArgs []string) (*exec.Cmd, error) {
